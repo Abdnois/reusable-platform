@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.yarn/cache
+.yarn/install-state.gz
+.pnp.*
+
+# Build output
+dist/
+build/
+out/
+coverage/
+*.tsbuildinfo
+.next/
+.vite/
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local agent/tooling workspace
+.freebuff/
