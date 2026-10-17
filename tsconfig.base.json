@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    // skipLibCheck: true is deliberate and documented. First-party code below is
+    // still fully strict-checked; this only disables re-checking of checked-in
+    // third-party `.d.ts` files (drizzle-orm 0.45.x emits internal type errors
+    // under TS 5.9+). Revisit if typescript is ever downgraded.
+    "skipLibCheck": true
+  }
+}

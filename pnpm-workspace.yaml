@@ -1,0 +1,6 @@
+# Workspace layout: each application lives in apps/, each reusable product
+# package lives in packages/. CommerceCore will appear as packages/commercecore
+# (Step 2) with its own schema and migration journal — never inside authcore.
+packages:
+  - "packages/*"
+  - "apps/*"

@@ -1,0 +1,30 @@
+{
+  "name": "@platform/authcore",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable authentication/authorization core. Owns schema `authcore` and journal table `authcore_migrations` in each customer database.",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/test/*.test.ts",
+    "gate": "node src/gate/run-authcore-gate.ts",
+    "generate": "drizzle-kit generate --config=drizzle.config.ts",
+    "migrate": "drizzle-kit migrate --config=drizzle.config.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.4",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.11",
+    "typescript": "5.9.3"
+  }
+}
