@@ -32,3 +32,11 @@ _Verification note [Verified 2026-10-17]: commit 1's push observed as `95ef8d1..
 | 3 | Docs: ADR 0008 + handoff/setup/recovery/session-log updates | `docs/adr/0008-workspace-skeleton-and-migration-gate.md`, `handoff.md`, `docs/development/setup.md`, `docs/development/recovery.md`, `docs/session-log.md` | `146cc3c06e3468fa96596c7fa35303bab7a9b6dd` (`146cc3c`) — **pushed; push observed `9b32032..146cc3c`; `ls-remote` equal** |
 
 _Verification note [Verified 2026-10-17]: tests executed this session and observed: `pnpm -r typecheck` → exit 0; `pnpm -r test` → 16/16 pass; `pnpm --filter @platform/authcore generate` → idempotent ("No schema changes"); `pnpm gate:authcore` → 8 PASS + 1 PENDING (db-presence), exit 0; gate FAIL path observed earlier with exit 1. Database-presence NOT executed (no database started, per task constraint). The historical proof cluster was not started, stopped, or modified._
+
+2026-10-18 · Docs-sync session — README/handoff aligned to post-foundation reality
+Prior-session note [Verified 2026-10-18]: Step 1 session A's finalization commit a3dafc08f788d5e119fb666435b27c45858548f9 (a3dafc0 — "docs: record Step 1 docs commit SHA and session verification notes") is recorded here because a file cannot contain its own hash; it was observed as HEAD at this session's start with ls-remote agreement.
+
+#	Action	Files (exact)	Commit
+1	README status/setup/ADR-index lines and handoff header/§3/§4/§8/§9/§11/§12/manifest synced to actual repo state (Step 1 foundation committed in prior sessions; no code changes)	README.md, handoff.md	469fa319921e29a7ecb3d1e4757c5aab97cec1d6 — pushed; ls-remote verified equal
+2	Session-log finalized with commit 1's hash	docs/session-log.md	this commit — own hash recorded in the next session's entry
+Verification note [Verified 2026-10-18]: pre-session trust-check: HEAD a3dafc08f788d5e119fb666435b27c45858548f9 matched ls-remote origin main; working tree clean before edits. Docs-only session: typecheck/tests/gate intentionally not re-run (no code, schema, or dependency changes). Each push verified with git ls-remote origin main == git rev-parse HEAD.
