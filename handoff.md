@@ -58,6 +58,14 @@ Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architec
   [docs/development/git-workflow.md](docs/development/git-workflow.md).
 - Prior known-good baseline `95ef8d1` remains reachable; no history was rewritten.
 
+**Read-only audit** [Verified 2026-10-17]: confirmed the above in a fresh session —
+branch `main`; HEAD `6008e056c99913a481527ceb408ba33e8cef1334`; `git ls-remote origin main`
+returned exactly that SHA; working tree clean; all 16 tracked files present; no
+secret-pattern hits in tracked files (`.env` absent, `.env.example` inert and tracked);
+proof toolchain directory intact with the database server stopped (no `postgres.exe`, no
+listener on 55432). The audit made **no changes**. Audit checkpoints are checkpoints,
+not freezes — the repo is expected to advance once Step 1 is authorized.
+
 ## 4. Completed work (all sessions; stands without chat history)
 
 1. **Architecture proposal** [Recorded] — approved in principle across several review
@@ -65,8 +73,9 @@ Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architec
    [docs/architecture/overview.md](docs/architecture/overview.md) and the ADRs.
 2. **Drizzle dual-journal migration proof** [Recorded] — disposable project at
    `C:\Users\Abid\proof-toolchain\drizzle-proof` (outside the repo, deliberately not
-   committed), with pinned `drizzle-orm@0.45.4`, `drizzle-kit@0.31.11`, `pg@8.23.1` and
-   portable PostgreSQL on port 55432. **Results: 19/19 assertions passed**, notably:
+   committed), with pinned `drizzle-orm@0.45.4`, `drizzle-kit@0.31.11`, `pg@8.23.1` and    portable PostgreSQL on port 55432. **Results: 19/19 assertions passed** — a
+    **historical result, not re-verified since** (the disposable proof project lives
+    outside the repo and was not re-executed during the 2026-10-17 audit). Notably:
    - one database, two schemas (`authcore`, `commerce`), each with its **own journal table** in schema `drizzle`
    - each journal contains only its own core's migrations; re-running is idempotent
    - cross-core FK count = **0**; every FK is intra-schema

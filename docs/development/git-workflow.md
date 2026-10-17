@@ -1,7 +1,7 @@
 # Git workflow and checkpoint policy
 
-> Mandatory workflow for this repository. Nothing here overrides obs — all commits
-> run by an agent follow the same rules as manual commits.
+> Mandatory workflow for this repository. Nothing here overrides the owner's standing
+> instructions — commits made by an agent follow exactly the same rules as manual commits.
 
 ## Core rules (non-negotiable)
 
@@ -24,6 +24,24 @@
 7. **No secrets in Git:** real `.env` files, dump files, credentials, customer data —
    excluded by policy AND by `.gitignore`; `.env.example` remains inert (see ADRs:
    email and rate limiting defer secrets deliberately).
+
+## Safety rules (explicit)
+
+1. **Inspect before you touch:** run `git status --short` before making any change.
+2. **Never automatically discard work:** uncommitted, staged, or untracked changes are
+   inspected and handled deliberately — never wiped by a bulk command.
+3. **No destructive recoveries:** `git reset --hard`, `git clean`, and history-rewriting
+   are never a routine recovery shortcut and are never used to hide failures.
+4. **Never rewrite pushed history** (no amending/rebasing/reverting of commits already on the remote).
+5. **Inspect before staging:** review each file's actual diff (`git diff`) before it is
+   committed; stage only paths that belong to the unit.
+6. **Never commit secrets:** real credentials or `.env` files never enter Git
+   (`.env.example` stays inert).
+7. **Close every meaningful session:** update `handoff.md` and
+   [docs/session-log.md](session-log.md) with what was actually done, then commit and push
+   as one final unit.
+8. **Verify every push:** after pushing, `git ls-remote origin main` must return the SHA
+   of the intended local commit. If it differs, the push did not land — diagnose, never assume.
 
 ## Per-unit routine
 
