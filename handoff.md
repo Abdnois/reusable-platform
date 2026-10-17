@@ -6,7 +6,7 @@
 >
 > Legend: **[Verified]** = checked against tool output in the session noted. **[Recorded]** = result from an earlier session, reported in that session's own output; not re-run here.
 
-Last updated: 2026-10-18 · Session type: documentation sync (Step 1 in progress)
+Last updated: 2026-10-18 · Session type: Argon2id hashing implementation (Step 1 in progress)
 
 ## 1. Project goal
 
@@ -74,6 +74,7 @@ Read-only audit [Verified 2026-10-17]: an earlier audit at HEAD 6008e05 confirme
 4. **Session recovery system** [Verified 2026-10-17] — the `handoff.md` + `docs/` set,
    created, committed and pushed per [docs/development/git-workflow.md](docs/development/git-workflow.md).
 5. **Step 1 workspace foundation + migration-safety gate** [Verified 2026-10-17, session A] — pnpm workspace; packages/authcore with pinned pnpm 10.34.7 / TS 5.9.3 / drizzle-orm 0.45.4 / drizzle-kit 0.31.11 / pg 8.23.1; authcore schema + journal authcore_migrations; initial migration committed; gate pnpm gate:authcore (8 config/artifact checks PASS + DB-presence PENDING); 16/16 gate tests PASS. Details: ADR 0008; exact commits: session log, 2026-10-17 Step 1 session A entry.
+6. **Argon2id password hashing module** [Verified 2026-10-18, session B] — new module `packages/authcore/src/password.ts` with `hashPassword()` and `verifyPassword()` using @node-rs/argon2 with OWASP-recommended Argon2id params (memoryCost 19456 KiB, timeCost 2, parallelism 1); input validation; constant-time verify; malformed hash handling; 9 new tests (16 existing gate tests unchanged, 25/25 total pass). Added `tsx` devDependency to support `node --test` with TypeScript. Details: exact commit in session log below; brief: task brief 1 (Argon2id hashing module).
 
 ## 5. Machine-specific toolchain state
 
@@ -146,12 +147,12 @@ migration gate); feature slices (hashing, registration, sessions, lockout) do no
 | Negative control (journal collision reproduces silent skip) | reproduced | [Recorded] |
 | `git log` / `status` / `ls-remote` agreement | clean tree, remote matches local HEAD | [Verified 2026-10-17; re-verified at 2026-10-18 session start] |
 | pnpm -r typecheck | exit 0 | [Verified 2026-10-17] |
-| pnpm -r test | 16/16 pass | [Verified 2026-10-17] |
+| pnpm -r test | 25/25 pass (16 gate + 9 Argon2id) | [Verified 2026-10-18 session B; pre-existing 16 unchanged] |
 | pnpm gate:authcore | 8 PASS + 1 PENDING (db-presence), exit 0 | [Verified 2026-10-17] |
 | Migration generate idempotency | "No schema changes" on re-run | [Verified 2026-10-17] |
 | Portable toolchain dirs + stopped DB server | present / stopped | [Verified 2026-10-17] |
 | Docker image build | not attempted | pending — Step 6 |
-| In-image Argon2 hash+verify | not attempted | pending — Step 1 (next slice) |
+| In-image Argon2 hash+verify | pending — Step 1 wrap-up (Docker build) |
 | Rate-limit and lockout behaviour tests | not attempted | pending — Step 1 |
 | M2 args hardening tests | not attempted | pending — Step 1 |
 

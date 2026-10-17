@@ -12,12 +12,13 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/test/*.test.ts",
+    "test": "node --import tsx/esm --test src/test/*.test.ts",
     "gate": "node src/gate/run-authcore-gate.ts",
     "generate": "drizzle-kit generate --config=drizzle.config.ts",
     "migrate": "drizzle-kit migrate --config=drizzle.config.ts"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1"
   },
@@ -25,6 +26,7 @@
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
     "drizzle-kit": "0.31.11",
+    "tsx": "^4.23.15",
     "typescript": "5.9.3"
   }
 }
