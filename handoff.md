@@ -47,11 +47,16 @@ Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architec
 | History | Full clone, not shallow |
 | Working tree | Clean; tracked files exactly `.gitignore` + `README.md` |
 
-**This session's commits** — this handoff is finalized before the commits it describes, so
-the exact hashes are recorded in [docs/session-log.md](docs/session-log.md), updated and
-checked against the remote at the end of this session. If the last committed handoff
-disagrees with `git log`, run the recovery ritual in
-[docs/development/recovery.md](docs/development/recovery.md) before doing anything else.
+**This session's commits** [Verified — this session]:
+
+- `05f19e2514022aebdc18ec4c815d4cfd070eb838` (`05f19e2`) — "docs: add session recovery
+  system (handoff, architecture overview, ADRs, dev guides)" — 15 files, pushed to
+  `origin/main` and **verified**: `git ls-remote origin main` returned the same SHA
+  immediately after the push (diff `95ef8d1..05f19e2`); tree clean afterwards.
+- A second finalization commit (handoff + session-log hashes) follows this one; a file
+  cannot contain its own hash, so its SHA is confirmed at push time via the ritual in
+  [docs/development/git-workflow.md](docs/development/git-workflow.md).
+- Prior known-good baseline `95ef8d1` remains reachable; no history was rewritten.
 
 ## 4. Completed work (all sessions; stands without chat history)
 
