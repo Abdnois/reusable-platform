@@ -34,15 +34,26 @@ It is **machine-local, untracked, and replaceable** — see
 
 ## Project-internal commands
 
-Populated as the workspace appears (Step 1). Expected commands at that point:
+**Working today** (all executed with observed output as of 2026-10-17):
 
 ```
-pnpm install                     # install all workspace deps (frozen-lockfile in CI)
-pnpm -r test                     # run every package's tests
-pnpm -r typecheck                # strict TS in all packages
-pnpm migrate                     # orchestrator: apply all core migrations in declared order
-pnpm gate:schemas                # presence gate: assert schemas/tables/journals exist
+pnpm install                # install all workspace deps from the committed lockfile
+pnpm -r typecheck           # strict TS in all packages (currently: authcore)
+pnpm -r test                # run every package's tests (currently: 16 gate tests)
+pnpm gate:authcore          # AuthCore migration-safety gate (config + artifacts; DB-presence = PENDING w/o AUTHCORE_GATE_DB_URL)
+pnpm --filter @platform/authcore generate     # regenerate migrations after schema edits (no DB needed)
 ```
 
-None of these exist yet. Do not claim any command "should work" without executing it
-and recording the output in the checklist.
+**Still future** (created with their slices; do not pretend they exist):
+
+```
+pnpm migrate:apply          # orchestrator over ALL core migrations — Step 4 slice
+pnpm gate:schemas           # cross-core presence gate over every core — Step 4 slice
+pnpm dev / pnpm build       # API + storefront runtime — Steps 3/5
+```
+
+The AuthCore package itself has `pnpm --filter @platform/authcore migrate` (drizzle-kit
+migrate against AUTHCORE_DATABASE_URL) — it exists as a script but has **not** been
+executed against any database yet, so treat it as unproven until first run in a slice
+that provisions a disposable dev database. Do not run it against the historical proof
+cluster.

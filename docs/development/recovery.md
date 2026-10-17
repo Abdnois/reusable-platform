@@ -111,14 +111,15 @@ no pushed history was rewritten.
 - Preserve the boundaries: schema `authcore` and schema `commerce` stay separate, each
   with its own journal; no cross-core foreign keys; AuthCore migrates cleanly alone into
   a fresh database.
-- Planned commands — **[future], do not exist yet; create/replace them with the actual
-  scripts in Step 1 and update this table then:**
-  ```
-  pnpm install
-  pnpm migrate:apply     # apply both cores' migrations in declared order (per-core journals)
-  pnpm migrate:verify    # presence gate: assert schemas/tables/journals actually exist
-  pnpm -r test
-  ```
+- Actual workflow commands (as of 2026-10-17): **[today]** `pnpm install`,
+  `pnpm -r typecheck`, `pnpm -r test` (16 AuthCore gate tests),
+  `pnpm --filter @platform/authcore generate` (regenerate migrations, no DB needed),
+  and `pnpm gate:authcore` (migration-safety gate; with a scratch DB at
+  `AUTHCORE_GATE_DB_URL` it also does read-only presence checks — **[future]** until a
+  disposable dev database is provisioned).
+- **[future], do not exist yet:** cross-core orchestration
+  (`pnpm migrate:apply`, `pnpm gate:schemas`) — these are created in Step 4 and must be
+  updated **in this file** the moment they become real.
 - Do not start PostgreSQL, or run any historical proof artifacts (e.g. the disposable
   `drizzle-proof` project) as part of ordinary recovery — those were one-time validation
   experiments outside the repository ([Recorded], not re-executed).
@@ -131,9 +132,10 @@ Do these in order and record the outputs:
 2. **[today]** `git log --oneline -5` — matches the session log's latest entry.
 3. **[today]** `git ls-remote origin main` vs `git rev-parse HEAD` — identical SHAs.
 4. **[today]** `git stash list` — empty unless you know why.
-5. **[future, Step 1 onward]** run available project tests (`pnpm -r test`) and the
-   migration presence gate — until the workspace exists there are no tests or workspace
-   scripts to run; do not pretend otherwise in the handoff.
+5. **[today, from 2026-10-17 onward]** `pnpm install && pnpm -r typecheck && pnpm -r test`
+   and `pnpm gate:authcore` — these exist and were all executed with observed output;
+   keep them green after recovery (the DB-presence part of the gate stays PENDING until
+   a scratch database is configured — see its explicit PENDING output).
 
 ## H. What if even Git history is unavailable (edge case)
 

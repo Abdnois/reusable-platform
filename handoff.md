@@ -25,7 +25,7 @@ Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architec
 
 ## 2. Mandatory seven-step roadmap (fixed order — do not reorder)
 
-1. **Build AuthCore** ← current step (not started)
+1. **Build AuthCore** ← current step (workspace + migration-safety foundation complete on 2026-10-17; feature slices awaiting approval)
 2. Build CommerceCore
 3. Integrate both through the API
 4. Build and integrate the database (schemas/migrations are developed *alongside* steps 1–4, never postponed)
@@ -89,6 +89,16 @@ not freezes — the repo is expected to advance once Step 1 is authorized.
    created, committed and pushed per [docs/development/git-workflow.md](docs/development/git-workflow.md).
 
 ## 5. Machine-specific toolchain state
+
+**Step 1 foundation (started and verified 2026-10-17):** pnpm workspace with packages/authcore
+committed and pushed: pinned pnpm 10.34.7 / TS 5.9.3 / drizzle-orm 0.45.4 / drizzle-kit 0.31.11
+/ pg 8.23.1 (see ADR 0008); authcore schema `authcore` + journal `authcore_migrations`;
+initial migration output committed; migration-safety gate `pnpm gate:authcore` (8 config/artifact
+checks PASS + DB-presence PENDING) and 16/16 gate tests PASS. **Next AuthCore slices:
+registration + Argon2id hashing (in-image verify first), then sessions.**
+
+### Machine-local (portable) toolchain — untracked, not in Git
+
 
 Directory `C:\Users\Abid\proof-toolchain\` [Verified — exists with named subdirs]:
 

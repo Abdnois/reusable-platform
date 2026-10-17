@@ -21,4 +21,12 @@ _Verification note [Verified 2026-10-17]: commit 1's push observed as `95ef8d1..
 |---|---|---|---|
 | 0 | Read-only recovery audit (no edits, no commits) | none | none — audit verified `6008e05` as HEAD with `ls-remote` agreement, clean tree, 16 tracked files, no secret-pattern hits, DB server stopped |
 | 1 | Git-workflow typo fix + explicit safety rules; recovery.md strengthened (clone/secrets/database/verification sections, today-vs-future command labelling) | `docs/development/git-workflow.md`, `docs/development/recovery.md` | `2f0050fc0c6f910754d0ed8d301c36ab17002449` (`2f0050f`) — also updated `handoff.md` + this file; **pushed; `ls-remote` verified equal** (push observed as `6008e05..2f0050f`) |
-| 2 | Session-log finalized with commit 1's hash | `docs/session-log.md` | confirmed at push time — this file cannot contain its own commit's hash; verify with `git rev-parse HEAD` vs `git ls-remote origin main` |
+| 2 | Session-log finalized with commit 1's hash | `docs/session-log.md` | `88a2f74c759c6b813dd1bfa8abd791dbc74ad018` (`88a2f74`) — **pushed; `ls-remote` verified equal** |
+
+## 2026-10-17 · Step 1 session A — workspace foundation + migration gate
+
+| # | Action | Files (exact) | Commit |
+|---|---|---|---|
+| 1 | Workspace skeleton: root manifests, strict TS base, authcore package with pinned versions, schema, drizzle config, generated migration committed | `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `pnpm-lock.yaml`, `packages/authcore/{package.json,tsconfig.json,drizzle.config.ts}`, `packages/authcore/src/{index.ts,db/schema.ts}`, `packages/authcore/drizzle/{0000_bright_wolfpack.sql,meta/0000_snapshot.json,meta/_journal.json}` | `20e447f6b4c0acd2af9051e9a3579bd753030407` (`20e447f`) — **pushed** |
+| 2 | Migration-safety gate + tests (16/16 pass, negative fixtures incl.) + gate CLI (8 PASS + 1 PENDING db-presence) | `packages/authcore/src/gate/{checks.ts,validate.ts,run-authcore-gate.ts}`, `packages/authcore/src/test/gate.test.ts` | `9b32032db044e31bec75aa1a6f114c7bf8e3b597` (`9b32032`) — **pushed; push observed `88a2f74..9b32032`; `ls-remote` equal** |
+| 3 | Docs: ADR 0008 + handoff/setup/recovery/session-log updates | `docs/adr/0008-…md`, `handoff.md`, `docs/development/setup.md`, `docs/development/recovery.md`, `docs/session-log.md` | _pending at commit time; hash to be recorded when observed_ |
