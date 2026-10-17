@@ -20,5 +20,5 @@ _Verification note [Verified 2026-10-17]: commit 1's push observed as `95ef8d1..
 | # | Action | Files (exact) | Commit |
 |---|---|---|---|
 | 0 | Read-only recovery audit (no edits, no commits) | none | none — audit verified `6008e05` as HEAD with `ls-remote` agreement, clean tree, 16 tracked files, no secret-pattern hits, DB server stopped |
-| 1 | Git-workflow typo fix + explicit safety rules; recovery.md strengthened (clone/secrets/database/verification sections, today-vs-future command labelling) | `docs/development/git-workflow.md`, `docs/development/recovery.md` | _pending — this session's docs commit, hash recorded when observed_ |
-| 2 | Handoff + session-log finalized with that commit's hash | `handoff.md`, `docs/session-log.md` | _pending — final commit of this session; its own hash is confirmed at push time and recorded in the next entry that observes it_
+| 1 | Git-workflow typo fix + explicit safety rules; recovery.md strengthened (clone/secrets/database/verification sections, today-vs-future command labelling) | `docs/development/git-workflow.md`, `docs/development/recovery.md` | `2f0050fc0c6f910754d0ed8d301c36ab17002449` (`2f0050f`) — also updated `handoff.md` + this file; **pushed; `ls-remote` verified equal** (push observed as `6008e05..2f0050f`) |
+| 2 | Session-log finalized with commit 1's hash | `docs/session-log.md` | confirmed at push time — this file cannot contain its own commit's hash; verify with `git rev-parse HEAD` vs `git ls-remote origin main` |
