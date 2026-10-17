@@ -4,10 +4,9 @@
 > history, a running process, or an entire Windows installation is gone. At the end of
 > every session, update it to reflect reality — including "nothing was done" — then commit and push.
 >
-> Legend: **[Verified]** = checked against tool output in the session noted.
-> **[Recorded]** = result from an earlier session, reported in that session's own output; not re-run here.
+> Legend: **[Verified]** = checked against tool output in the session noted. **[Recorded]** = result from an earlier session, reported in that session's own output; not re-run here.
 
-Last updated: 2026-10-17 · Session type: documentation / recovery system (before Step 1)
+Last updated: 2026-10-18 · Session type: documentation sync (Step 1 in progress)
 
 ## 1. Project goal
 
@@ -17,15 +16,15 @@ as complete customer-specific solutions:
 - **AuthCore** — reusable authentication/authorization core.
 - **CommerceCore** — reusable commerce engine that works **without** AuthCore, including guest checkout.
 
-Each customer gets their **own configuration, deployment, and database**. This is **not**
-a shared multi-tenant SaaS platform. The cores never import each other's internals; the
+Each customer gets their **own configuration, deployment, and database**. This is **not** a
+shared multi-tenant SaaS platform. The cores never import each other's internals; the
 API is the composition root. Branding lives in customer frontend/config layers only.
 
 Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architecture/overview.md)
 
 ## 2. Mandatory seven-step roadmap (fixed order — do not reorder)
 
-1. **Build AuthCore** ← current step (workspace + migration-safety foundation complete on 2026-10-17; feature slices awaiting approval)
+1. **Build AuthCore** ← current step (workspace + migration-safety foundation complete 2026-10-17; Argon2id hashing slice approved by owner 2026-10-18, not yet started)
 2. Build CommerceCore
 3. Integrate both through the API
 4. Build and integrate the database (schemas/migrations are developed *alongside* steps 1–4, never postponed)
@@ -35,47 +34,34 @@ Details: [README.md](README.md) · [docs/architecture/overview.md](docs/architec
 
 ## 3. Repository state
 
-**Pre-session state** [Verified 2026-10-17, immediately before this session's commits]:
+**Pre-session state** [Verified 2026-10-18, at session start]:
 
 | Item | Value |
 |---|---|
 | Local path | `/e/reusable-platform` (Windows: `E:\reusable-platform`) |
 | Branch | `main` |
-| Known-good commit | `95ef8d10ec6ad28a0c40ad1d8694827bde04f7a6` (`95ef8d1` — "initialize repository with README and .gitignore") |
-| Remote | `origin` → `https://github.com/Abdnois/reusable-platform.git` |
-| Remote agreement | `git ls-remote origin main` returned exactly this hash |
-| History | Full clone, not shallow |
-| Working tree | Clean; tracked files exactly `.gitignore` + `README.md` |
+| HEAD | `a3dafc08f788d5e119fb666435b27c45858548f9` (a3dafc0 — "docs: record Step 1 docs commit SHA and session verification notes") |
+| Remote | `origin`; `git ls-remote origin main` returned exactly the HEAD SHA at session start |
+| History | Full clone, not shallow; no history rewritten |
+| Working tree | Clean before this session's edits |
 
-**This session's commits** [Verified — this session]:
+Content on main [Verified 2026-10-17/18]: the planning/docs set (handoff.md, README.md, .env.example, docs/ incl. ADRs 0001–0008) plus Step 1 foundation code: pnpm workspace root manifests, packages/authcore (pinned toolchain, authcore schema with users table, journal authcore_migrations, committed initial migration, migration-safety gate, 16/16 gate tests). Exact per-commit file lists: docs/session-log.md.
 
-- `05f19e2514022aebdc18ec4c815d4cfd070eb838` (`05f19e2`) — "docs: add session recovery
-  system (handoff, architecture overview, ADRs, dev guides)" — 15 files, pushed to
-  `origin/main` and **verified**: `git ls-remote origin main` returned the same SHA
-  immediately after the push (diff `95ef8d1..05f19e2`); tree clean afterwards.
-- A second finalization commit (handoff + session-log hashes) follows this one; a file
-  cannot contain its own hash, so its SHA is confirmed at push time via the ritual in
-  [docs/development/git-workflow.md](docs/development/git-workflow.md).
-- Prior known-good baseline `95ef8d1` remains reachable; no history was rewritten.
+This session (2026-10-18, docs-sync): aligned README.md and this file to the above reality (status lines, repository-state section, constraints, tests table, next steps, manifest). No code, schema, migration, or dependency changes. Exact SHAs: session log, 2026-10-18 entry.
 
-**Read-only audit** [Verified 2026-10-17]: confirmed the above in a fresh session —
-branch `main`; HEAD `6008e056c99913a481527ceb408ba33e8cef1334`; `git ls-remote origin main`
-returned exactly that SHA; working tree clean; all 16 tracked files present; no
-secret-pattern hits in tracked files (`.env` absent, `.env.example` inert and tracked);
-proof toolchain directory intact with the database server stopped (no `postgres.exe`, no
-listener on 55432). The audit made **no changes**. Audit checkpoints are checkpoints,
-not freezes — the repo is expected to advance once Step 1 is authorized.
+Read-only audit [Verified 2026-10-17]: an earlier audit at HEAD 6008e05 confirmed branch main, ls-remote agreement, clean tree, 16 tracked files, no secret-pattern hits (.env absent, .env.example inert and tracked), proof toolchain intact with the database server stopped. Audit checkpoints are checkpoints, not freezes — the repo is expected to advance.
 
 ## 4. Completed work (all sessions; stands without chat history)
 
 1. **Architecture proposal** [Recorded] — approved in principle across several review
-   rounds. Its durable content was previously chat-only; from this session it lives in
+   rounds. Its durable content was previously chat-only; from 2026-10-17 it lives in
    [docs/architecture/overview.md](docs/architecture/overview.md) and the ADRs.
 2. **Drizzle dual-journal migration proof** [Recorded] — disposable project at
    `C:\Users\Abid\proof-toolchain\drizzle-proof` (outside the repo, deliberately not
-   committed), with pinned `drizzle-orm@0.45.4`, `drizzle-kit@0.31.11`, `pg@8.23.1` and    portable PostgreSQL on port 55432. **Results: 19/19 assertions passed** — a
-    **historical result, not re-verified since** (the disposable proof project lives
-    outside the repo and was not re-executed during the 2026-10-17 audit). Notably:
+   committed), with pinned `drizzle-orm@0.45.4`, `drizzle-kit@0.31.11`, `pg@8.23.1` and
+   portable PostgreSQL on port 55432. **Results: 19/19 assertions passed** — a
+   **historical result, not re-verified since** (the disposable proof project lives
+   outside the repo and was not re-executed during the 2026-10-17 audit). Notably:
    - one database, two schemas (`authcore`, `commerce`), each with its **own journal table** in schema `drizzle`
    - each journal contains only its own core's migrations; re-running is idempotent
    - cross-core FK count = **0**; every FK is intra-schema
@@ -85,20 +71,21 @@ not freezes — the repo is expected to advance once Step 1 is authorized.
    **exit code 0** while silently creating **no commerce tables**. A journal collision
    *looks green*. **Consequence:** the build gate must assert physical schema/journal
    presence after migration; exit codes are insufficient.
-4. **Session recovery system** [Verified this session] — the `handoff.md` + `docs/` set,
+4. **Session recovery system** [Verified 2026-10-17] — the `handoff.md` + `docs/` set,
    created, committed and pushed per [docs/development/git-workflow.md](docs/development/git-workflow.md).
+5. **Step 1 workspace foundation + migration-safety gate** [Verified 2026-10-17, session A] — pnpm workspace; packages/authcore with pinned pnpm 10.34.7 / TS 5.9.3 / drizzle-orm 0.45.4 / drizzle-kit 0.31.11 / pg 8.23.1; authcore schema + journal authcore_migrations; initial migration committed; gate pnpm gate:authcore (8 config/artifact checks PASS + DB-presence PENDING); 16/16 gate tests PASS. Details: ADR 0008; exact commits: session log, 2026-10-17 Step 1 session A entry.
 
 ## 5. Machine-specific toolchain state
 
-**Step 1 foundation (started and verified 2026-10-17):** pnpm workspace with packages/authcore
+**Step 1 foundation (verified 2026-10-17):** pnpm workspace with packages/authcore
 committed and pushed: pinned pnpm 10.34.7 / TS 5.9.3 / drizzle-orm 0.45.4 / drizzle-kit 0.31.11
 / pg 8.23.1 (see ADR 0008); authcore schema `authcore` + journal `authcore_migrations`;
 initial migration output committed; migration-safety gate `pnpm gate:authcore` (8 config/artifact
-checks PASS + DB-presence PENDING) and 16/16 gate tests PASS. **Next AuthCore slices:
-registration + Argon2id hashing (in-image verify first), then sessions.**
+checks PASS + DB-presence PENDING) and 16/16 gate tests PASS. Next AuthCore slice: Argon2id
+hashing module + in-image verification fixture (owner-approved 2026-10-18); then registration + DB-backed
+revocable sessions; then rate limiting + durable lockout.
 
 ### Machine-local (portable) toolchain — untracked, not in Git
-
 
 Directory `C:\Users\Abid\proof-toolchain\` [Verified — exists with named subdirs]:
 
@@ -109,7 +96,7 @@ Directory `C:\Users\Abid\proof-toolchain\` [Verified — exists with named subdi
 | `pgdata/` | initdb-ed cluster. **Server STOPPED** [Verified: no `postgres.exe` process, no listener on port 55432]. Start only when needed; stop after. |
 | `drizzle-proof/` | Disposable proof project with its own `node_modules`. Untracked, machine-local, entirely rebuildable (see recovery doc). |
 
-All of it is machine-local, not in Git, and not on PATH [Verified]. Freebuff restarts do
+All of it is machine-local, not in Git, and not on PATH [Verified]. Restarts do
 not auto-start the database server; it must stay stopped between sessions unless work needs it.
 
 ## 6. Approved decisions (binding baseline)
@@ -131,6 +118,7 @@ contradict them; changes require explicit approval and a handoff entry.
 - **Server-side authorization only** — never trust browser/caller-supplied permissions; guest-order claiming verifies ownership (ADR 0007)
 
 **Recommended, not yet formally approved** (track until owner decides):
+
 - CI presence gate as a merge-blocking job (consequence of the negative control) — recommended, status pending
 - UTC-only timestamps everywhere — recommendation
 - Turbo/Nx task runner — deferred; plain pnpm scripts suffice for v1
@@ -144,7 +132,8 @@ contradict them; changes require explicit approval and a handoff entry.
 
 ## 8. Constraints
 
-- No application code yet. The old `Website` / `Website-clean` projects are not to be modified or referenced.
+Application code so far is limited to the Step 1 workspace foundation (schema anchor
+migration gate); feature slices (hashing, registration, sessions, lockout) do not exist yet. The old `Website` / `Website-clean` projects are not to be modified or referenced.
 - Never commit secrets, real `.env` files, credentials, DB dumps, or customer data. `.env` is git-ignored; only `.env.example` is tracked and kept realistic-but-inert.
 - Push after meaningful, verified units — not after every tiny edit (git-workflow doc).
 - **Do not reorder or skip the seven-step roadmap.**
@@ -155,42 +144,49 @@ contradict them; changes require explicit approval and a handoff entry.
 |---|---|---|
 | Drizzle proof: 19 assertions (dual journal, zero cross-core FKs, AuthCore-alone, reverse order, idempotent re-run) | 19/19 PASS | [Recorded] |
 | Negative control (journal collision reproduces silent skip) | reproduced | [Recorded] |
-| `git log` / `status` / `ls-remote` agreement | clean tree, remote matches local HEAD | [Verified this session] |
-| Portable toolchain dirs + stopped DB server | present / stopped | [Verified this session] |
+| `git log` / `status` / `ls-remote` agreement | clean tree, remote matches local HEAD | [Verified 2026-10-17; re-verified at 2026-10-18 session start] |
+| pnpm -r typecheck | exit 0 | [Verified 2026-10-17] |
+| pnpm -r test | 16/16 pass | [Verified 2026-10-17] |
+| pnpm gate:authcore | 8 PASS + 1 PENDING (db-presence), exit 0 | [Verified 2026-10-17] |
+| Migration generate idempotency | "No schema changes" on re-run | [Verified 2026-10-17] |
+| Portable toolchain dirs + stopped DB server | present / stopped | [Verified 2026-10-17] |
 | Docker image build | not attempted | pending — Step 6 |
-| In-image Argon2 hash+verify | not attempted | pending — Step 1 |
+| In-image Argon2 hash+verify | not attempted | pending — Step 1 (next slice) |
 | Rate-limit and lockout behaviour tests | not attempted | pending — Step 1 |
 | M2 args hardening tests | not attempted | pending — Step 1 |
 
 ## 10. Failed attempts this session
 
-None. (Historical [Recorded]: backgrounding the proof's database inside a synchronous
+None this session. (Historical [Recorded]: backgrounding the proof's database inside a synchronous
 shell timed out twice; fixed by running the process fully detached with its own logfile.)
 
 ## 11. Known risks
 
 1. **Migration configuration** is the highest-risk area — the negative control proved a
    plausible misconfiguration looks green while silently creating nothing. The first
-   code milestone must ship the presence gate.
+   code milestone must ship the presence gate. (Shipped 2026-10-17; keep it green.)
 2. **Container path unvalidated** — no Docker was available; both the multi-stage pnpm
    image and in-image Argon2 are claimed only on research. Verify at first Docker exposure.
-3. **Stable-line perturbation** — `latest` currently does not resolve to the v1 RC
-   [Recorded], but releases move; lock exact versions at Step 1 start and note any change here.
+3. **Stable-line perturbation** — versions were locked at Step 1 start (2026-10-17, ADR 0008);
+   re-check latest resolution if dependencies are ever re-resolved, and note any change here.
 
 ## 12. Next steps in exact order (fresh-session starter)
 
-1. **Trust-check**: `git status`, `git log --oneline -5`, `git ls-remote origin main` —
-   compare against this file and the session log. If anything is surprising, stop and investigate.
+Working mode (agreed with owner 2026-10-18): task briefs (code + instructions) are drafted by an
+external assistant; the local agent applies them exactly as written, verifies by command output, and
+commits per the git-workflow doc. If reality differs from a brief's expectations, STOP and report —
+never improvise or "fix" silently.
+
+1. **Trust-check**: `git status`, `git log --oneline -5`, `git ls-remote origin main` — compare
+   against this file and the session log. If anything is surprising, stop and investigate.
 2. Read [docs/development/setup.md](docs/development/setup.md), then
    [docs/architecture/overview.md](docs/architecture/overview.md) and the ADR index.
-3. **Step 1 (AuthCore) begins only after explicit approval.** Planned slices, each an
-   independently testable commit+push unit:
-   1. pnpm workspace skeleton (root configs + `packages/authcore` shell that type-checks).
-   2. AuthCore schema + **migration presence gate** (prove schemas/journals exist post-migrate).
-   3. Argon2id hashing module + in-image verification fixture.
-   4. Registration, login, DB-backed revocable sessions, logout + tests.
-   5. Rate limiting + durable lockout including the mandated brute-force/reset-abuse/lockout-failure tests (ADR 0004).
-   6. Step-1 wrap-up: docs refresh, handoff update, final checkpoint push.
+3. **Step 1 (AuthCore)** — remaining slices, each an independently testable commit+push unit:
+   1. Argon2id hashing module + in-image verification fixture ← next (owner-approved 2026-10-18)
+   2. Registration, login, DB-backed revocable sessions, logout + tests.
+   3. Rate limiting + durable lockout including the mandated brute-force/reset-abuse/lockout-failure tests (ADR 0004).
+   4. Step-1 wrap-up: docs refresh, handoff update, final checkpoint push.
+4. Completed Step 1 slices (do not redo): workspace skeleton; authcore schema + migration presence gate (2026-10-17, session A).
 
 ## 13. Checkpoint discipline
 
@@ -204,12 +200,20 @@ or broken work "done"; record failures verbatim; never rewrite pushed history to
 
 | File | Created | Last touched |
 |---|---|---|
-| `handoff.md` | 2026-10-17 | 2026-10-17 |
-| `README.md` (replaced) | 2026-10-17 | 2026-10-17 |
+| `handoff.md` | 2026-10-17 | 2026-10-18 |
+| `README.md (replaced)` | 2026-10-17 | 2026-10-18 |
 | `.env.example` | 2026-10-17 | 2026-10-17 |
 | `docs/architecture/overview.md` | 2026-10-17 | 2026-10-17 |
-| `docs/adr/0001` … `docs/adr/0007` | 2026-10-17 | 2026-10-17 |
+| `docs/adr/0001 … docs/adr/0007` | 2026-10-17 | 2026-10-17 |
+| `docs/adr/0008-workspace-skeleton-and-migration-gate.md` | 2026-10-17 | 2026-10-17 |
 | `docs/development/setup.md` | 2026-10-17 | 2026-10-17 |
 | `docs/development/git-workflow.md` | 2026-10-17 | 2026-10-17 |
 | `docs/development/recovery.md` | 2026-10-17 | 2026-10-17 |
-| `docs/session-log.md` | 2026-10-17 | 2026-10-17 |
+| `docs/session-log.md` | 2026-10-17 | 2026-10-18 |
+| `package.json, pnpm-workspace.yaml, tsconfig.base.json, pnpm-lock.yaml` | 2026-10-17 | 2026-10-17 |
+| `packages/authcore/{package.json,tsconfig.json,drizzle.config.ts}` | 2026-10-17 | 2026-10-17 |
+| `packages/authcore/src/{index.ts,db/schema.ts}` | 2026-10-17 | 2026-10-17 |
+| `packages/authcore/drizzle/{0000_bright_wolfpack.sql,meta/0000_snapshot.json,meta/_journal.json}` | 2026-10-17 | 2026-10-17 |
+| `packages/authcore/src/gate/{checks.ts,validate.ts,run-authcore-gate.ts}` | 2026-10-17 | 2026-10-17 |
+| `packages/authcore/src/test/gate.test.ts` | 2026-10-17 | 2026-10-17 |
+
