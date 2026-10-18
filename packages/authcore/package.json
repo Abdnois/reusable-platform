@@ -13,6 +13,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx/esm --test src/test/*.test.ts",
+    "test:db": "node scripts/e2e.mjs",
     "gate": "node src/gate/run-authcore-gate.ts",
     "generate": "drizzle-kit generate --config=drizzle.config.ts",
     "migrate": "drizzle-kit migrate --config=drizzle.config.ts"

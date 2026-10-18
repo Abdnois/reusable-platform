@@ -17,4 +17,12 @@ export default defineConfig({
     table: "authcore_migrations",
     schema: "drizzle",
   },
+  // Connection credentials for `drizzle-kit migrate` (generate never connects).
+  // The e2e runner (scripts/e2e.mjs) sets AUTHCORE_DB_URL to the ephemeral
+  // scratch cluster; the placeholder keeps the config importable without env.
+  dbCredentials: {
+    url:
+      process.env.AUTHCORE_DB_URL ??
+      "postgres://authcore:placeholder@127.0.0.1:5432/placeholder",
+  },
 });
