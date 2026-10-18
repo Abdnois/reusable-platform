@@ -1,9 +1,10 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { credentials, sessions, users } from "./db/schema.ts";
+import { credentials, loginAttempts, sessions, users } from "./db/schema.ts";
 import { hashPassword, verifyPassword } from "./password.ts";
 import { normalizeEmail } from "./email.ts";
 import { generateSessionToken, hashSessionToken } from "./session-token.ts";
+import { isLocked, nextLockDurationMs } from "./lockout.ts";
 
 /** Session lifetime: 7 days. */
 export const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -77,10 +78,36 @@ export async function registerUser(
 }
 
 /**
- * Log in: verify credentials and create a session.
- * Returns null on any failure (unknown email, wrong password, bad input).
- * Performs a dummy hash-verify on unknown email so response timing does
- * not reveal whether an email is registered.
+ * Record a failed login attempt: increment the counter and apply the
+ * exponential-backoff lockout window when the threshold is crossed.
+ */
+async function recordLoginFailure(
+  db: NodePgDatabase,
+  email: string,
+): Promise<void> {
+  const existing = await db
+    .select({ failedAttempts: loginAttempts.failedAttempts })
+    .from(loginAttempts)
+    .where(eq(loginAttempts.email, email))
+    .limit(1);
+  const newCount = (existing[0]?.failedAttempts ?? 0) + 1;
+  const duration = nextLockDurationMs(newCount);
+  const lockedUntil = duration > 0 ? new Date(Date.now() + duration) : null;
+  const now = new Date();
+  await db
+    .insert(loginAttempts)
+    .values({ email, failedAttempts: newCount, lockedUntil, updatedAt: now })
+    .onConflictDoUpdate({
+      target: loginAttempts.email,
+      set: { failedAttempts: newCount, lockedUntil, updatedAt: now },
+    });
+}
+
+/**
+ * Log in: enforce lockout, verify credentials, create a session.
+ * Returns null on any failure (locked out, unknown email, wrong password,
+ * bad input). Failed attempts increment the lockout counter; success
+ * resets it. Timing-equalization on unknown email is preserved.
  */
 export async function loginUser(
   db: NodePgDatabase,
@@ -90,6 +117,14 @@ export async function loginUser(
   try {
     email = normalizeEmail(input.email);
   } catch {
+    return null;
+  }
+  const attemptRows = await db
+    .select({ lockedUntil: loginAttempts.lockedUntil })
+    .from(loginAttempts)
+    .where(eq(loginAttempts.email, email))
+    .limit(1);
+  if (isLocked(attemptRows[0]?.lockedUntil ?? null, new Date())) {
     return null;
   }
   const found = await db
@@ -106,7 +141,11 @@ export async function loginUser(
   const ok = await verifyPassword(row.passwordHash, input.password).catch(
     () => false,
   );
-  if (!ok) return null;
+  if (!ok) {
+    await recordLoginFailure(db, email);
+    return null;
+  }
+  await db.delete(loginAttempts).where(eq(loginAttempts.email, email));
   return createSession(db, row.id);
 }
 

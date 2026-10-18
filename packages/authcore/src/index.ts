@@ -14,7 +14,7 @@ export const AUTHCORE_JOURNAL_TABLE = "authcore_migrations" as const;
 /** Shared Drizzle metadata schema where each core's journal table lives. */
 export const DRIZZLE_METADATA_SCHEMA = "drizzle" as const;
 
-export { users, credentials, sessions } from "./db/schema.ts";
+export { users, credentials, sessions, loginAttempts } from "./db/schema.ts";
 export { hashPassword, verifyPassword } from "./password.ts";
 export { normalizeEmail } from "./email.ts";
 export { generateSessionToken, hashSessionToken } from "./session-token.ts";
@@ -27,6 +27,13 @@ export {
   SESSION_TTL_MS,
   EmailAlreadyRegisteredError,
 } from "./registration.ts";
+export {
+  LOCKOUT_THRESHOLD,
+  LOCKOUT_BASE_MS,
+  LOCKOUT_MAX_MS,
+  nextLockDurationMs,
+  isLocked,
+} from "./lockout.ts";
 export type {
   RegisterInput,
   RegisteredUser,

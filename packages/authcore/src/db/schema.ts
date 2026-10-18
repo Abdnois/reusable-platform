@@ -1,4 +1,4 @@
-import { pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, pgSchema, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // AuthCore exclusively owns every object under schema `authcore`.
 export const authcoreSchema = pgSchema("authcore");
@@ -39,4 +39,16 @@ export const sessions = authcoreSchema.table("sessions", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   revokedAt: timestamp("revoked_at", { withTimezone: true }),
+});
+
+/**
+ * Login attempt tracking for lockout. Keyed by normalized email.
+ * failedAttempts resets to 0 on successful login; lockedUntil drives
+ * the exponential-backoff lockout window.
+ */
+export const loginAttempts = authcoreSchema.table("login_attempts", {
+  email: text("email").primaryKey(),
+  failedAttempts: integer("failed_attempts").notNull().default(0),
+  lockedUntil: timestamp("locked_until", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

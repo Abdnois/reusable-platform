@@ -6,7 +6,7 @@
 >
 > Legend: **[Verified]** = checked against tool output in the session noted. **[Recorded]** = result from an earlier session, reported in that session's own output; not re-run here.
 
-Last updated: 2026-10-18 · Session type: AuthCore Slice 3 — registration, credentials, and session management
+Last updated: 2026-10-18 · Session type: AuthCore Slice 4 — login attempt tracking and exponential lockout
 
 ## 1. Project goal
 
@@ -75,6 +75,7 @@ created, committed and pushed per [docs/development/git-workflow.md](docs/develo
 5. **Step 1 workspace foundation + migration-safety gate** [Verified 2026-10-17, session A] — pnpm workspace; packages/authcore with pinned pnpm 10.34.7 / TS 5.9.3 / drizzle-orm 0.45.4 / drizzle-kit 0.31.11 / pg 8.23.1; authcore schema + journal authcore_migrations; initial migration committed; gate pnpm gate:authcore (8 config/artifact checks PASS + DB-presence PENDING); 16/16 gate tests PASS. Details: ADR 0008; exact commits: session log, 2026-10-17 Step 1 session A entry.
 6. **Argon2id password hashing module** [Verified 2026-10-18, session B] — new module `packages/authcore/src/password.ts` with `hashPassword()` and `verifyPassword()` using @node-rs/argon2 with OWASP-recommended Argon2id params (memoryCost 19456 KiB, timeCost 2, parallelism 1); input validation; constant-time verify; malformed hash handling; 9 new tests (16 existing gate tests unchanged, 25/25 total pass). Added `tsx` devDependency to support `node --test` with TypeScript. Details: exact commit in session log below; brief: task brief 1 (Argon2id hashing module).
 7. **AuthCore registration, credentials, and session management** [Verified 2026-10-18, session C] — extended `packages/authcore/src/db/schema.ts` (added `users.email` unique, new `credentials` table, new `sessions` table); added `src/email.ts`, `src/session-token.ts`, `src/registration.ts`, `src/test/registration.test.ts`; replaced `src/index.ts` barrel; auto-generated migration `packages/authcore/drizzle/0001_careless_magik.sql` + journal update. New slice is DB-logic-only (no new runtime deps); 9 new pure-logic tests; full suite 34/34 pass (16 gate + 9 Argon2id + 9 registration). Gate: 8 PASS + 1 PENDING (db-presence). One-line status also recorded here and in session log; exact commit and generated SQL below.
+8. **AuthCore login attempt tracking and exponential lockout** [Verified 2026-10-18, session D] — added `packages/authcore/src/db/schema.ts` `login_attempts` table; added `src/lockout.ts` (policy only: `LOCKOUT_THRESHOLD`, `LOCKOUT_BASE_MS`, `LOCKOUT_MAX_MS`, `nextLockDurationMs`, `isLocked`); updated `src/registration.ts` so `loginUser` enforces lockout, records failures with exponential backoff, and resets on success; updated `src/index.ts` barrel; added `src/test/lockout.test.ts`. Auto-generated migration `packages/authcore/drizzle/0002_stiff_pestilence.sql` + `meta/0002_snapshot.json` + journal update. New slice is DB-logic-only (no new runtime deps); 9 new pure-policy tests; full suite 43/43 pass (16 gate + 9 Argon2id + 9 registration + 9 lockout). Gate: 8 PASS + 1 PENDING (db-presence). One-line status also recorded here and in session log; exact commit and generated SQL below.
 
 ## 5. Machine-specific toolchain state
 
@@ -147,7 +148,7 @@ migration gate); feature slices (hashing, registration, sessions, lockout) do no
 | Negative control (journal collision reproduces silent skip) | reproduced | [Recorded] |
 | `git log` / `status` / `ls-remote` agreement | clean tree, remote matches local HEAD | [Verified 2026-10-17; re-verified at 2026-10-18 session start] |
 | pnpm -r typecheck | exit 0 | [Verified 2026-10-17] |
-| pnpm -r test | 34/34 pass (16 gate + 9 Argon2id + 9 registration) | [Verified 2026-10-18 session C] |
+| pnpm -r test | 43/43 pass (16 gate + 9 Argon2id + 9 registration + 9 lockout) | [Verified 2026-10-18 session D] |
 | pnpm gate:authcore | 8 PASS + 1 PENDING (db-presence), exit 0 | [Verified 2026-10-17] |
 | Migration generate idempotency | "No schema changes" on re-run | [Verified 2026-10-17] |
 | Portable toolchain dirs + stopped DB server | present / stopped | [Verified 2026-10-17] |

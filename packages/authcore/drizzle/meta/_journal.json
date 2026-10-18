@@ -15,6 +15,13 @@
       "when": 1792316563881,
       "tag": "0001_careless_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792316920558,
+      "tag": "0002_stiff_pestilence",
+      "breakpoints": true
     }
   ]
 }
