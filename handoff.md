@@ -1,3 +1,15 @@
+> **STATUS: PAUSED (as of 2026-10-18)**
+>
+> AuthCore development is paused pending real client demand.
+> Resume trigger: a client requires custom or self-hosted authentication
+> that established libraries (better-auth, Auth.js) cannot provide.
+>
+> State at pause: all tests green (43/43 unit, 11/11 integration ×2),
+> gate 9/9 with live DB, migrations idempotent locally, HEAD = `5a234bb`,
+> remote in sync, tree clean. See §4 item 9 for full M5 verification.
+>
+> Current priority: reusable client website template + delivery process.
+
 # Project Handoff — reusable-platform
 
 > **Read this first in every new session.** This file is the recovery point when chat
