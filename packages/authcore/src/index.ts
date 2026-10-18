@@ -14,4 +14,22 @@ export const AUTHCORE_JOURNAL_TABLE = "authcore_migrations" as const;
 /** Shared Drizzle metadata schema where each core's journal table lives. */
 export const DRIZZLE_METADATA_SCHEMA = "drizzle" as const;
 
-export { users } from "./db/schema.ts";
+export { users, credentials, sessions } from "./db/schema.ts";
+export { hashPassword, verifyPassword } from "./password.ts";
+export { normalizeEmail } from "./email.ts";
+export { generateSessionToken, hashSessionToken } from "./session-token.ts";
+export {
+  registerUser,
+  loginUser,
+  createSession,
+  verifySession,
+  revokeSession,
+  SESSION_TTL_MS,
+  EmailAlreadyRegisteredError,
+} from "./registration.ts";
+export type {
+  RegisterInput,
+  RegisteredUser,
+  SessionInfo,
+  SessionUser,
+} from "./registration.ts";
