@@ -42,13 +42,22 @@ export interface SessionUser {
   email: string;
 }
 
+/**
+ * Detect a Postgres unique-violation (SQLSTATE 23505) anywhere in an error's
+ * cause chain. Drizzle's node-postgres driver wraps driver-level failures in
+ * DrizzleQueryError with the original pg error attached as `cause`, so the
+ * SQLSTATE may sit one or more levels below the thrown error. Walking the
+ * chain keeps this correct for both mocked errors (code on the error itself)
+ * and real database errors (code on the underlying cause).
+ */
 function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    (error as { code?: string }).code === "23505"
-  );
+  let current: unknown = error;
+  while (typeof current === "object" && current !== null) {
+    const code = (current as { code?: unknown }).code;
+    if (code === "23505") return true;
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
 }
 
 /**
